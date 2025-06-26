@@ -22,6 +22,11 @@ load_dotenv()
 
 os.environ["HF_TOKEN"]=os.getenv("HF_TOKEN")
 
+llm = ChatGroq(
+            model="Gemma2-9b-It",  # More memory-efficient model
+            temperature=0.7,
+            max_tokens=150  # Limit response length
+        )
 
 
 
@@ -49,12 +54,6 @@ def predict(text):
     # outputs = model(**inputs)
     # prediction = torch.argmax(outputs.logits, dim=-1)
     # return emotion_names[prediction.item()]
-    ##llm = ChatGroq(model="Gemma2-9b-It")
-    llm = ChatGroq(
-            model="mixtral-8x7b-32768",  # More memory-efficient model
-            temperature=0.7,
-            max_tokens=150  # Limit response length
-        )
     prompt = (
         "You are an emotion detector. Detect the emotion of the inptut and answer in one word.\n\n"
         f"{text}"
@@ -66,14 +65,6 @@ def predict(text):
 
 class BOT:
     def __init__(self):
-        ##LLM
-        ##self.llm = ChatGroq(model="mistral-saba-24b")
-        #self.llm = ChatGroq(model="Gemma2-9b-It")
-        self.llm = ChatGroq(
-            model="mixtral-8x7b-32768",  # More memory-efficient model
-            temperature=0.7,
-            max_tokens=150  # Limit response length
-        )
 
         self.system_prompt = (
             "You are a compassionate and supportive AI mental health assistant. "
@@ -101,7 +92,7 @@ class BOT:
         self.vectordb = Chroma(persist_directory="chroma_db",embedding_function=self.embedding_model)
         self.retriever = self.vectordb.as_retriever(search_kwargs={"k": 2})  # Retrieve fewer documents
         
-        self.question_answer_chain=create_stuff_documents_chain(self.llm,self.prompt)
+        self.question_answer_chain=create_stuff_documents_chain(llm,self.prompt)
         self.rag_chain=create_retrieval_chain(self.retriever,self.question_answer_chain)
 
         self.conversational_rag_chain = RunnableWithMessageHistory(
@@ -148,6 +139,6 @@ class BOT:
             "Session Analysis:"
         )
         
-        result = self.llm.invoke(analysis_prompt)
+        result = llm.invoke(analysis_prompt)
         
         return result.content
