@@ -25,23 +25,23 @@ os.environ["HF_TOKEN"]=os.getenv("HF_TOKEN")
 
 
 
-# Create expanded emotion mapping
-emotion_mapping = {
-    'joy': 0,
-    'sadness': 1,
-    'anger': 2,
-    'fear': 3,
-    'anxiety': 4,  # Will be created from fear + specific patterns
-    'stress': 5,   # Will be created from anger + specific patterns
-    'surprise': 6,
-    'love': 7
-}
+# # Create expanded emotion mapping
+# emotion_mapping = {
+#     'joy': 0,
+#     'sadness': 1,
+#     'anger': 2,
+#     'fear': 3,
+#     'anxiety': 4,  # Will be created from fear + specific patterns
+#     'stress': 5,   # Will be created from anger + specific patterns
+#     'surprise': 6,
+#     'love': 7
+# }
 
-emotion_names = list(emotion_mapping.keys())
+# emotion_names = list(emotion_mapping.keys())
 
-# Load saved model
-model = AutoModelForSequenceClassification.from_pretrained("./emotion-detection")
-tokenizer = AutoTokenizer.from_pretrained("./emotion-detection")
+# # Load saved model
+# model = AutoModelForSequenceClassification.from_pretrained("./emotion-detection")
+# tokenizer = AutoTokenizer.from_pretrained("./emotion-detection")
 
 # Use for prediction
 def predict(text):
