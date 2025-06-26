@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mental Health Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4f94f7'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-white text-gray-800 flex flex-col min-h-screen">
+
+  <!-- Main Content -->
+  <main class="flex-grow flex items-center justify-center px-4 py-8">
+    <div class="w-full max-w-4xl flex flex-col items-center justify-center text-center">
+      <!-- Welcome -->
+      <div class="mb-8">
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Welcome!</h1>
+        <p class="text-lg sm:text-xl text-gray-600 mt-2">How are you feeling today?</p>
+      </div>
+
+      <!-- Feature Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-3xl text-left">
+        <!-- Current Mood -->
+        <a href="{{ url_for('LetsTalk') }}" class="flex items-start gap-4 p-6 border border-gray-200 rounded-xl hover:shadow-lg transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
+            10-4.48 10-10S17.52 2 12 2zm0
+            18c-4.41 0-8-3.59-8-8s3.59-8
+            8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            <circle cx="8" cy="14" r="1.5"/>
+            <circle cx="16" cy="14" r="1.5"/>
+          </svg>
+          <div>
+            <h2 class="text-lg font-semibold text-gray-800">Let’s Talk</h2>
+            <p class="text-sm text-gray-600">direct, empathetic, safe</p>
+          </div>
+        </a>
+
+        <!-- Therapy Sessions -->
+        <a href="{{ url_for('TherapySessions') }}" class="flex items-start gap-4 p-6 border border-gray-200 rounded-xl hover:shadow-lg transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20 4H4c-1.1 0-2 .9-2
+            2v12c0 1.1.9 2 2 2h16c1.1 0
+            2-.9 2-2V6c0-1.1-.9-2-2-2zm0
+            14H4V8h16v10zm-4-6h-8v-2h8v2z"/>
+          </svg>
+          <div>
+            <h2 class="text-lg font-semibold text-gray-800">Therapy Sessions</h2>
+            <p class="text-sm text-gray-600">Access guided therapy sessions</p>
+          </div>
+        </a>
+
+        <!-- Self-Care -->
+        <a href="{{ url_for('SelfCare') }}" class="flex items-start gap-4 p-6 border border-gray-200 rounded-xl hover:shadow-lg transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 3H5c-1.1 0-2 .9-2
+            2v14c0 1.1.9 2 2 2h14c1.1
+            0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1
+            10l-6 6-4-4 1.41-1.41L12
+            15.17l4.59-4.59L18 13z"/>
+          </svg>
+          <div>
+            <h2 class="text-lg font-semibold text-gray-800">Self-Care</h2>
+            <p class="text-sm text-gray-600">Explore self-care activities</p>
+          </div>
+        </a>
+
+        <!-- Insights -->
+        <a href="{{ url_for('insights') }}" class="flex items-start gap-4 p-6 border border-gray-200 rounded-xl hover:shadow-lg transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M3 17l6-6 4 4 8-8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div>
+            <h2 class="text-lg font-semibold text-gray-800">Insights</h2>
+            <p class="text-sm text-gray-600">View your mental health trends</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Fixed Footer -->
+  <footer class="bg-gray-100 border-t text-sm text-gray-600 w-full text-center py-3">
+    &copy; 2025 Mental Health Therapy Bot · <a href="#" class="hover:text-primary">Privacy</a> · <a href="#" class="hover:text-primary">Terms</a>
+  </footer>
+
+</body>
+</html>
