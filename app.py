@@ -255,7 +255,7 @@ def get_response():
 @login_required
 def start_session():
     session['active'] = True
-    unique_session_id = f"user_{current_user.get_id()}_{uuid.uuid4()}"
+    unique_session_id = str(uuid.uuid4())
     session['session_id'] = unique_session_id
 
     chat_bot.add_configuration(unique_session_id)
