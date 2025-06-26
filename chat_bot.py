@@ -49,7 +49,12 @@ def predict(text):
     # outputs = model(**inputs)
     # prediction = torch.argmax(outputs.logits, dim=-1)
     # return emotion_names[prediction.item()]
-    llm = ChatGroq(model="Gemma2-9b-It")
+    ##llm = ChatGroq(model="Gemma2-9b-It")
+    llm = ChatGroq(
+            model="mixtral-8x7b-32768",  # More memory-efficient model
+            temperature=0.7,
+            max_tokens=150  # Limit response length
+        )
     prompt = (
         "You are an emotion detector. Detect the emotion of the inptut and answer in one word.\n\n"
         f"{text}"
@@ -63,7 +68,12 @@ class BOT:
     def __init__(self):
         ##LLM
         ##self.llm = ChatGroq(model="mistral-saba-24b")
-        self.llm = ChatGroq(model="Gemma2-9b-It")
+        #self.llm = ChatGroq(model="Gemma2-9b-It")
+        self.llm = ChatGroq(
+            model="mixtral-8x7b-32768",  # More memory-efficient model
+            temperature=0.7,
+            max_tokens=150  # Limit response length
+        )
 
         self.system_prompt = (
             "You are a compassionate and supportive AI mental health assistant. "
@@ -82,9 +92,14 @@ class BOT:
             ]
         )
         
-        self.embedding_model = HuggingFaceEmbeddings(model="all-MiniLM-L6-v2")
+        # Initialize embedding model with reduced memory footprint
+        self.embedding_model = HuggingFaceEmbeddings(
+            model="all-MiniLM-L6-v2",
+            model_kwargs={'device': 'cpu'},  # Force CPU to save memory
+            encode_kwargs={'normalize_embeddings': True}
+        )
         self.vectordb = Chroma(persist_directory="chroma_db",embedding_function=self.embedding_model)
-        self.retriever = self.vectordb.as_retriever()
+        self.retriever = self.vectordb.as_retriever(search_kwargs={"k": 2})  # Retrieve fewer documents
         
         self.question_answer_chain=create_stuff_documents_chain(self.llm,self.prompt)
         self.rag_chain=create_retrieval_chain(self.retriever,self.question_answer_chain)
@@ -136,4 +151,3 @@ class BOT:
         result = self.llm.invoke(analysis_prompt)
         
         return result.content
-
