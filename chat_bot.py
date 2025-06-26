@@ -11,14 +11,14 @@ from langchain_core.prompts import MessagesPlaceholder
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+#from transformers import AutoTokenizer, AutoModelForSequenceClassification
 load_dotenv()
 
-## Langsmith Tracking
-os.environ["LANGCHAIN_API_KEY"]=os.getenv("LANGCHAIN_API_KEY")
-os.environ["LANGSMITH_TRACING"]=os.getenv("LANGSMITH_TRACING")
-os.environ["LANGSMITH_ENDPOINT"]=os.getenv("LANGSMITH_ENDPOINT")
-os.environ["LANGSMITH_PROJECT"]=os.getenv("LANGSMITH_PROJECT")
+# ## Langsmith Tracking
+# os.environ["LANGCHAIN_API_KEY"]=os.getenv("LANGCHAIN_API_KEY")
+# os.environ["LANGSMITH_TRACING"]=os.getenv("LANGSMITH_TRACING")
+# os.environ["LANGSMITH_ENDPOINT"]=os.getenv("LANGSMITH_ENDPOINT")
+# os.environ["LANGSMITH_PROJECT"]=os.getenv("LANGSMITH_PROJECT")
 
 os.environ["HF_TOKEN"]=os.getenv("HF_TOKEN")
 
