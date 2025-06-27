@@ -22,11 +22,7 @@ load_dotenv()
 
 os.environ["HF_TOKEN"]=os.getenv("HF_TOKEN")
 
-llm = ChatGroq(
-            model="Gemma2-9b-It",  # More memory-efficient model
-            temperature=0.7,
-            max_tokens=150  # Limit response length
-        )
+
 
 
 
@@ -49,23 +45,27 @@ llm = ChatGroq(
 # tokenizer = AutoTokenizer.from_pretrained("./emotion-detection")
 
 # Use for prediction
-def predict(text):
-    # inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
-    # outputs = model(**inputs)
-    # prediction = torch.argmax(outputs.logits, dim=-1)
-    # return emotion_names[prediction.item()]
-    prompt = (
-        "You are an emotion detector. Detect the emotion of the inptut and answer in one word.\n\n"
-        f"{text}"
-    )
-    result = llm.invoke(prompt)
-    return result.content
+# def predict(text):
+#     # inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
+#     # outputs = model(**inputs)
+#     # prediction = torch.argmax(outputs.logits, dim=-1)
+#     # return emotion_names[prediction.item()]
+#     prompt = (
+#         "You are an emotion detector. Detect the emotion of the inptut and answer in one word.\n\n"
+#         f"{text}"
+#     )
+#     result = llm.invoke(prompt)
+#     return result.content
 
 
 
 class BOT:
     def __init__(self):
-
+        self.llm = ChatGroq(
+            model="Gemma2-9b-It",  # More memory-efficient model
+            temperature=0.7,
+            max_tokens=150  # Limit response length
+        )
         self.system_prompt = (
             "You are a compassionate and supportive AI mental health assistant. "
             "Always respond in a calm, non-judgmental, and empathetic tone. "
@@ -74,7 +74,6 @@ class BOT:
             "Use the retrieved context below and consider the full chat history when formulating your response.\n\n"
             "{context}"
         )
-
         self.prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", self.system_prompt),
@@ -82,28 +81,26 @@ class BOT:
                 ("user", "{input}")
             ]
         )
-        
-        # Initialize embedding model with reduced memory footprint
-        self.embedding_model = HuggingFaceEmbeddings(
-            model="all-MiniLM-L6-v2",
-            model_kwargs={'device': 'cpu'},  # Force CPU to save memory
-            encode_kwargs={'normalize_embeddings': True}
-        )
-        self.vectordb = Chroma(persist_directory="chroma_db",embedding_function=self.embedding_model)
-        self.retriever = self.vectordb.as_retriever(search_kwargs={"k": 2})  # Retrieve fewer documents
-        
-        self.question_answer_chain=create_stuff_documents_chain(llm,self.prompt)
-        self.rag_chain=create_retrieval_chain(self.retriever,self.question_answer_chain)
-
-        self.conversational_rag_chain = RunnableWithMessageHistory(
-            self.rag_chain,
-            self.get_session_history,
-            input_messages_key="input",
-            history_messages_key="chat_history",
-            output_messages_key="answer",
-        )
         self.store = {}
-    
+
+    def load_rag_components(self):
+        if not hasattr(self, "retriever"):
+            self.embedding_model = HuggingFaceEmbeddings(
+                model="all-MiniLM-L6-v2",
+                model_kwargs={'device': 'cpu'},
+                encode_kwargs={'normalize_embeddings': True}
+            )
+            self.vectordb = Chroma(persist_directory="chroma_db", embedding_function=self.embedding_model)
+            self.retriever = self.vectordb.as_retriever(search_kwargs={"k": 2})
+            self.question_answer_chain = create_stuff_documents_chain(self.llm, self.prompt)
+            self.rag_chain = create_retrieval_chain(self.retriever, self.question_answer_chain)
+            self.conversational_rag_chain = RunnableWithMessageHistory(
+                self.rag_chain,
+                self.get_session_history,
+                input_messages_key="input",
+                history_messages_key="chat_history",
+                output_messages_key="answer",
+            )
     
     def get_session_history(self,session_id: str) -> BaseChatMessageHistory:
         if session_id not in self.store:
@@ -116,8 +113,9 @@ class BOT:
         }
 
     def chat(self,user_message):
+        self.load_rag_components()
 
-        emotion = predict(user_message)
+        emotion = self.predict(user_message)
 
         format = f"The user input is: \"{user_message}\" and the detected emotion is: \"{emotion}\" (maybe)."
 
@@ -139,6 +137,19 @@ class BOT:
             "Session Analysis:"
         )
         
-        result = llm.invoke(analysis_prompt)
+        result = self.llm.invoke(analysis_prompt)
         
+        return result.content
+
+    # Use for prediction
+    def predict(self,text):
+        # inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
+        # outputs = model(**inputs)
+        # prediction = torch.argmax(outputs.logits, dim=-1)\
+        # return emotion_names[prediction.item()]
+        prompt = (
+            "You are an emotion detector. Detect the emotion of the inptut and answer in one word.\n\n"
+            f"{text}"
+        )
+        result = self.llm.invoke(prompt)
         return result.content
