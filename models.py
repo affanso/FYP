@@ -65,7 +65,7 @@ class Emotion(db.Model):
     
     emotion_id: Mapped[str] = mapped_column(String(36), primary_key=True)
     message_id: Mapped[str] = mapped_column(String(36), ForeignKey('messages.message_id'))
-    emotion_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    emotion_type: Mapped[str] = mapped_column(String(100), nullable=False)
     confidence_score: Mapped[float] = mapped_column(Float, nullable=False)
     
     # Relationships
